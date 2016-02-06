@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 ## Introduction:
 This is the 1st peer assessment for the course "Reproducible Research". The student will use a dataset with data form a personal activity monitoring device, which collect data at 5 minute intervals. The data file (csv) can be found in this directory, and includes three variables:
@@ -17,7 +12,8 @@ This is the 1st peer assessment for the course "Reproducible Research". The stud
 
 1. Loading libraries:
 
-```{r eval=TRUE, echo=TRUE}
+
+```r
 library(dplyr)
 library(ggplot2)
 ```
@@ -25,7 +21,8 @@ library(ggplot2)
 
 2. Reading CSV file and preprocessing the data frame:
 
-```{r eval=TRUE, echo=TRUE}
+
+```r
 df <- read.csv("activity.csv")
 df$date <- as.Date(df$date)
 noNA <- !is.na(df$steps)
@@ -39,7 +36,8 @@ Ignoring missing values for this step.
 
 1. Number of steps per day:
 
-```{r eval=TRUE, echo=TRUE}
+
+```r
 gdf <- group_by(dfNoNA, date)
 sumSteps <- summarise(gdf, sum(steps))
 names(sumSteps) <- c("date", "totalSteps")
@@ -49,22 +47,35 @@ names(sumSteps) <- c("date", "totalSteps")
 2. Histogram of steps each day
 
 (Note: Barplot show space between columns. Histograms don't. Area is proportional to frequency)
-```{r eval=TRUE, echo=TRUE}
+
+```r
 ggplot(sumSteps, aes(date, totalSteps, width=1)) + geom_bar(stat = "identity", fill="darkblue") + labs(title = "Daily steps", x = "Date", y = "Total Steps")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)
 
 
 3. Daily mean number of steps:
 
-```{r eval=TRUE, echo=TRUE}
+
+```r
 mean(sumSteps$totalSteps)
+```
+
+```
+## [1] 10766.19
 ```
 
 
 4. Daily median number of steps:
 
-```{r eval=TRUE, echo=TRUE}
+
+```r
 median(sumSteps$totalSteps)
+```
+
+```
+## [1] 10765
 ```
 
 
@@ -72,18 +83,30 @@ median(sumSteps$totalSteps)
 ## What is the average daily activity pattern?
 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-```{r eval=TRUE, echo=TRUE}
+
+```r
 gdf <- group_by(dfNoNA, interval)
 intervalMeanSteps <- summarise(gdf, mean(steps))
 names(intervalMeanSteps) <- c("interval", "meanSteps")
 ggplot(intervalMeanSteps, aes(interval, meanSteps)) + geom_line(lwd=1, aes(col=meanSteps)) + labs(title = "Mean Steps by 5-minute Interval", x = "Interval", y = "Mean Steps") + theme(legend.position="none")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)
+
 
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r eval=TRUE, echo=TRUE}
+
+```r
 filter(intervalMeanSteps, meanSteps == max(meanSteps))
+```
+
+```
+## Source: local data frame [1 x 2]
+## 
+##   interval meanSteps
+##      (int)     (dbl)
+## 1      835  206.1698
 ```
 
 
@@ -91,8 +114,13 @@ filter(intervalMeanSteps, meanSteps == max(meanSteps))
 ## Imputing missing values
 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
-```{r eval=TRUE, echo=TRUE}
+
+```r
 sum(is.na(df))
+```
+
+```
+## [1] 2304
 ```
 
 
@@ -103,7 +131,8 @@ sum(is.na(df))
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
-```{r eval=TRUE, echo=TRUE}
+
+```r
 dfFull <- df
 for(ix in seq(nrow(dfFull))) {
 	if (is.na(dfFull[ix,1])) {
@@ -120,16 +149,31 @@ names(sumStepsFull) <- c("date", "totalSteps")
 
 4. Make a histogram of the total number of steps taken each day.
 
-```{r eval=TRUE, echo=TRUE}
+
+```r
 ggplot(sumStepsFull, aes(date, totalSteps, width=1)) + geom_bar(stat = "identity", fill="darkblue") + labs(title="Daily Steps with NA Values as Interval Means", x="Date", y="Total Steps")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)
 
 
 * Calculate and report the mean and median total number of steps taken per day.
 
-```{r eval=TRUE, echo=TRUE}
+
+```r
 mean(sumStepsFull$totalSteps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(sumStepsFull$totalSteps)
+```
+
+```
+## [1] 10766.19
 ```
 
 
@@ -137,18 +181,22 @@ median(sumStepsFull$totalSteps)
 
  The new values fill some gaps in X axis (omitted in previous plots). Now, each day have reported values, and no day is omitted.
  
-```{r eval=TRUE, echo=TRUE}
+
+```r
 par(mfcol = c(2,1))
 plot(sumSteps$date, sumSteps$totalSteps, type="l", col="blue", main = "Daily Steps Excluding NA Values", xlab = "Date", ylab = "Total Steps", las=1, cex.axis=0.5)
 plot(sumStepsFull$date, sumStepsFull$totalSteps, type="l", col="red", main = "Daily Steps with NA Values as Interval Means", xlab = "Date", ylab = "Total Steps", las=1, cex.axis=0.5)
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-13-1.png)
 
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
-```{r eval=TRUE, echo=TRUE}
+
+```r
 dfWeek <- mutate(dfFull, Week = format(dfFull$date, "%w"))
 dfWeek$Week[dfWeek$Week == 0 | dfWeek$Week == 6] <- "Weekend"
 dfWeek$Week[dfWeek$Week %in% 1:5] <- "Weekday"
@@ -158,10 +206,13 @@ dfWeek$Week <- as.factor(dfWeek$Week)
 
 2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
 
-```{r eval=TRUE, echo=TRUE}
+
+```r
 gdfWeek <- group_by(dfWeek, interval, Week)
 intervalMeanWeek <- summarise(gdfWeek, mean(steps))
 names(intervalMeanWeek) <- c("interval", "week", "meanSteps")
 ggplot(intervalMeanWeek, aes(interval, meanSteps)) + geom_line(aes(col=meanSteps)) + facet_grid(week~.) + labs(title = "Mean Steps by 5-minutes Interval (Weekday vs Weekend)", x = "5-minutes Interval", y = "Mean Steps")+ theme(legend.position="none")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-15-1.png)
 
