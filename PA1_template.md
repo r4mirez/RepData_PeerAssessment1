@@ -1,6 +1,7 @@
 # Reproducible Research: Peer Assessment 1
 
 ## Introduction:
+
 This is the 1st peer assessment for the course "Reproducible Research". The student will use a dataset with data form a personal activity monitoring device, which collect data at 5 minute intervals. The data file (csv) can be found in this directory, and includes three variables:
 
 * steps: Step count during the 5-minute interval.
@@ -10,7 +11,7 @@ This is the 1st peer assessment for the course "Reproducible Research". The stud
 
 ## Loading and preprocessing the data
 
-1. Loading libraries:
+* Loading libraries:
 
 
 ```r
@@ -19,7 +20,7 @@ library(ggplot2)
 ```
 
 
-2. Reading CSV file and preprocessing the data frame:
+* Reading CSV file and preprocessing the data frame:
 
 
 ```r
@@ -34,7 +35,7 @@ dfNoNA <- df[noNA, ]
 ## What is mean total number of steps taken per day?
 Ignoring missing values for this step.
 
-1. Number of steps per day:
+* Number of steps per day:
 
 
 ```r
@@ -44,7 +45,7 @@ names(sumSteps) <- c("date", "totalSteps")
 ```
 
 
-2. Histogram of steps each day
+* Histogram of steps each day
 
 (Note: Barplot show space between columns. Histograms don't. Area is proportional to frequency)
 
@@ -55,7 +56,7 @@ ggplot(sumSteps, aes(date, totalSteps, width=1)) + geom_bar(stat = "identity", f
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)
 
 
-3. Daily mean number of steps:
+* Daily mean number of steps:
 
 
 ```r
@@ -67,7 +68,7 @@ mean(sumSteps$totalSteps)
 ```
 
 
-4. Daily median number of steps:
+* Daily median number of steps:
 
 
 ```r
@@ -81,7 +82,8 @@ median(sumSteps$totalSteps)
 
 
 ## What is the average daily activity pattern?
-1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+
+* Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 
 ```r
@@ -94,7 +96,7 @@ ggplot(intervalMeanSteps, aes(interval, meanSteps)) + geom_line(lwd=1, aes(col=m
 ![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)
 
 
-2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+* Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 
 ```r
@@ -112,7 +114,8 @@ filter(intervalMeanSteps, meanSteps == max(meanSteps))
 
 
 ## Imputing missing values
-1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+
+* Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
 
 ```r
@@ -124,12 +127,12 @@ sum(is.na(df))
 ```
 
 
-2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+* Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
- * New data frame where steps NA values are equal to the mean steps for the same 5-minute interval:
+- New data frame where steps NA values are equal to the mean steps for the same 5-minute interval:
 
 
-3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+* Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
 
 ```r
@@ -147,7 +150,7 @@ names(sumStepsFull) <- c("date", "totalSteps")
 ```
 
 
-4. Make a histogram of the total number of steps taken each day.
+* Make a histogram of the total number of steps taken each day.
 
 
 ```r
@@ -157,7 +160,7 @@ ggplot(sumStepsFull, aes(date, totalSteps, width=1)) + geom_bar(stat = "identity
 ![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)
 
 
-* Calculate and report the mean and median total number of steps taken per day.
+- Calculate and report the mean and median total number of steps taken per day.
 
 
 ```r
@@ -177,7 +180,7 @@ median(sumStepsFull$totalSteps)
 ```
 
 
-* Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+- Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
  The new values fill some gaps in X axis (omitted in previous plots). Now, each day have reported values, and no day is omitted.
  
@@ -193,7 +196,8 @@ plot(sumStepsFull$date, sumStepsFull$totalSteps, type="l", col="red", main = "Da
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
-1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+
+* Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
 
 ```r
@@ -204,7 +208,7 @@ dfWeek$Week <- as.factor(dfWeek$Week)
 ```
 
 
-2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+* Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
 
 
 ```r
