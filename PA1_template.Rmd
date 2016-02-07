@@ -36,7 +36,7 @@ dfNoNA <- df[noNA, ]
 
 
 ## What is mean total number of steps taken per day?
-Ignoring missing values for this step.
+ Ignoring missing values for this step.
 
 * Number of steps per day:
 
