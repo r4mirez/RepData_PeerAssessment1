@@ -50,10 +50,20 @@ names(sumSteps) <- c("date", "totalSteps")
 (Note: Barplot show space between columns. Histograms don't. Area is proportional to frequency)
 
 ```r
-ggplot(sumSteps, aes(date, totalSteps, width=1)) + geom_bar(stat = "identity", fill="darkblue") + labs(title = "Daily steps", x = "Date", y = "Total Steps")
+ggplot(sumSteps, aes(totalSteps, width=1)) + geom_histogram(fill="darkblue") + labs(title = "Frequency of Step Count", x = "Total Steps", y = "Frequency (number of days)")
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)
+
+```r
+ggplot(sumSteps, aes(date, totalSteps, width=1)) + geom_bar(stat = "identity", fill="darkblue") + labs(title = "Daily steps", x = "Date", y = "Total Steps")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-2.png)
 
 
 * Daily mean number of steps:
@@ -110,7 +120,7 @@ filter(intervalMeanSteps, meanSteps == max(meanSteps))
 ##      (int)     (dbl)
 ## 1      835  206.1698
 ```
-
+So, interval 835 contains the maximum number of steps.
 
 
 ## Imputing missing values
@@ -129,19 +139,20 @@ sum(is.na(df))
 
 * Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
-- New data frame where steps NA values are equal to the mean steps for the same 5-minute interval:
+New data frame where steps NA values are equal to the mean steps for the same 5-minute interval:
 
 
 * Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
 
 ```r
-dfFull <- df
+dfFull <- df  # New data frame where NA values will be filled.
 for(ix in seq(nrow(dfFull))) {
-	if (is.na(dfFull[ix,1])) {
-		myInterval <- dfFull$interval[ix]
+	if (is.na(dfFull[ix,1])) {  # If steps (the only col with NA values) is NA...
+		myInterval <- dfFull$interval[ix]  # Getting its interval value.
+    # Getting mean interval value (from intervalMeanSteps data frame)
 		myIntervalMean <- intervalMeanSteps$meanSteps[intervalMeanSteps$interval == myInterval]
-		dfFull[ix,1] <- myIntervalMean
+		dfFull[ix,1] <- myIntervalMean # Filling NA value with this value.
 	}
 }
 gdfFull <- group_by(dfFull, date)
@@ -154,16 +165,27 @@ names(sumStepsFull) <- c("date", "totalSteps")
 
 
 ```r
-ggplot(sumStepsFull, aes(date, totalSteps, width=1)) + geom_bar(stat = "identity", fill="darkblue") + labs(title="Daily Steps with NA Values as Interval Means", x="Date", y="Total Steps")
+ggplot(sumStepsFull, aes(totalSteps, width=1)) + geom_histogram(fill="darkblue") + labs(title="Frequency of Step Count with NA Values as Interval Means", x="Total Steps", y="Frequency (number of days)")
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)
+
+```r
+ggplot(sumStepsFull, aes(date, totalSteps, width=1)) + geom_bar(stat = "identity", fill="darkblue") + labs(title="Daily Steps with NA Values as Interval Means", x="Date", y="Total Steps")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-11-2.png)
 
 
 - Calculate and report the mean and median total number of steps taken per day.
 
 
 ```r
+# Mean:
 mean(sumStepsFull$totalSteps)
 ```
 
@@ -172,6 +194,7 @@ mean(sumStepsFull$totalSteps)
 ```
 
 ```r
+# Median:
 median(sumStepsFull$totalSteps)
 ```
 
@@ -220,3 +243,4 @@ ggplot(intervalMeanWeek, aes(interval, meanSteps)) + geom_line(aes(col=meanSteps
 
 ![](PA1_template_files/figure-html/unnamed-chunk-15-1.png)
 
+The pattern is different, and it seems to be more heterogeneous during weekdays (peak about intervals 800-900).
